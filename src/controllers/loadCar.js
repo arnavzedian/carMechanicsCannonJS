@@ -7,7 +7,7 @@ export default function loadCar(callback) {
   game.car = {};
 
   loader.load(
-    "./assets/toyCar.fbx",
+    "./assets/yellowCar.fbx",
     function (object) {
       object.traverse(function (child) {
         let receiveShadow = true;

@@ -8,6 +8,6 @@ export default function render() {
   this.camera.updateProjectionMatrix();
   this.renderer.render(this.scene, this.camera);
   requestAnimationFrame(this.render);
-  this.controls.update();
+
   this.physicsUpdate();
 }

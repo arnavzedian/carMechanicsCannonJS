@@ -12,18 +12,17 @@ export default function setupScene() {
     0.1,
     1000
   );
-  this.camera.position.set(0, 2, 8);
+  this.camera.position.set(0, 2, -8);
   this.camera.lookAt(new THREE.Vector3(0, 1, 0));
 
   this.renderer = new THREE.WebGLRenderer();
   this.renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(this.renderer.domElement);
 
-  this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-
   if (this.enableDebugger) {
     const axesHelper = new THREE.AxesHelper(8);
     this.scene.add(axesHelper);
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
   }
 
   setupCannon.call(this);

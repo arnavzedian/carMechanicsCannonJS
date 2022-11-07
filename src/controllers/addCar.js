@@ -94,4 +94,9 @@ export default function addCar() {
   game.vehicle = vehicle;
 
   game.car.wheels = wheelBodies;
+
+  this.followCam = new THREE.Object3D();
+  this.followCam.position.copy(this.camera.position);
+  this.scene.add(this.followCam);
+  this.followCam.parent = chassisBody.threeMesh;
 }
