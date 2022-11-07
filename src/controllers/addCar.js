@@ -40,10 +40,10 @@ export default function addCar() {
   });
 
   const axlewidth = 0.8;
-  options.chassisConnectionPointLocal.set(axlewidth, 0, -1);
+  options.chassisConnectionPointLocal.set(axlewidth, 0, -1.2);
   vehicle.addWheel(options);
 
-  options.chassisConnectionPointLocal.set(-axlewidth, 0, -1);
+  options.chassisConnectionPointLocal.set(-axlewidth, 0, -1.2);
   vehicle.addWheel(options);
 
   options.chassisConnectionPointLocal.set(axlewidth, 0, 1);
