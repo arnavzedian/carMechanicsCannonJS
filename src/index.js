@@ -12,6 +12,7 @@ import addVisualToCannonBody from "./controllers/addVisualToCannonBody";
 import cannonShapeToThreeMesh from "./controllers/cannonShapeToThreeMesh";
 import loadCar from "./controllers/loadCar";
 import { handleKeyDown, handleKeyUp } from "./controllers/handleKeys";
+import loadEnvironment from "./controllers/loadEnvironment";
 
 class Game {
   constructor() {
@@ -33,6 +34,8 @@ class Game {
     document.onkeydown = this.handleKeyDown;
     document.onkeyup = this.handleKeyUp;
 
+    this.loadEnvironment = loadEnvironment.bind(this);
+
     this.handleCamera = handleCamera.bind(this);
 
     this.setupScene();
@@ -44,6 +47,7 @@ class Game {
     this.addBody = this.addBody.bind(this);
 
     this.loadCar(this.addCar);
+    this.loadEnvironment();
 
     window.game = this;
   }
