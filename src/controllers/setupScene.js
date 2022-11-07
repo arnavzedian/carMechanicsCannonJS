@@ -1,67 +1,111 @@
+import * as THREE from "three";
+import * as CANNON from "cannon-es";
+import CannonDebugger from "cannon-es-debugger";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+
 export default function setupScene() {
-  ///physi.js scene
-  this.scene = new Physijs.Scene();
-  this.scene.setGravity(new THREE.Vector3(0, -50, 0));
-
-  ///background
-  this.renderer.setClearColor(this.backgroundColor, 1);
-
-  ///camera
+  this.scene = new THREE.Scene();
+  this.scene.background = new THREE.Color(0, 0, 0);
   this.camera = new THREE.PerspectiveCamera(
-    35,
+    40,
     window.innerWidth / window.innerHeight,
-    1,
-    10000
+    0.1,
+    1000
   );
-  this.camera.position.set(0, 20, 60);
-  this.camera.zoom = 3;
-  this.scene.add(this.camera);
+  this.camera.position.set(0, 2, 8);
+  this.camera.lookAt(new THREE.Vector3(0, 1, 0));
 
-  ///lighting & shadows
-  var lightA1 = new THREE.AmbientLight(0xffffff, 0.85);
-  this.scene.add(lightA1);
-  var lightD1 = new THREE.DirectionalLight(0xffffff, 0.3);
-  lightD1.position.set(-20, 100, 20);
-  lightD1.castShadow = true;
-  lightD1.shadow.camera.left = -100;
-  lightD1.shadow.camera.top = -100;
-  lightD1.shadow.camera.right = 100;
-  lightD1.shadow.camera.bottom = 100;
-  lightD1.shadow.camera.near = 1;
-  lightD1.shadow.camera.far = 130;
-  lightD1.shadow.mapSize.height = lightD1.shadow.mapSize.width = 1000;
-  this.scene.add(lightD1);
+  this.renderer = new THREE.WebGLRenderer();
+  this.renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(this.renderer.domElement);
+
+  this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+
+  if (this.enableDebugger) {
+    const axesHelper = new THREE.AxesHelper(8);
+    this.scene.add(axesHelper);
+  }
+
+  setupCannon.call(this);
+  addLights.call(this);
+}
+
+function setupCannon() {
+  this.physicsUpdate = physicsUpdate.bind(this);
+
+  const physicsWorld = new CANNON.World({
+    gravity: new CANNON.Vec3(0, -9.82, 0),
+  });
+
+  this.physicsWorld = physicsWorld;
+  this.fixedTimeStep = 1.0 / 60.0;
+  this.damping = 0.01;
+
+  physicsWorld.broadphase = new CANNON.NaiveBroadphase();
+
+  const groundShape = new CANNON.Plane();
+  const groundMaterial = new CANNON.Material();
+  this.groundMaterial = groundMaterial;
+  const groundBody = new CANNON.Body({ mass: 0, material: groundMaterial });
+  groundBody.quaternion.setFromAxisAngle(
+    new CANNON.Vec3(1, 0, 0),
+    -Math.PI / 2
+  );
+  groundBody.addShape(groundShape);
+  physicsWorld.addBody(groundBody);
+
+  this.addVisualToCannonBody(groundBody, "ground", false, true);
+
+  if (this.enableDebugger) {
+    const cannonDebugger = new CannonDebugger(this.scene, physicsWorld);
+    this.cannonDebugger = cannonDebugger;
+  }
+}
+
+function physicsUpdate() {
+  this.physicsWorld.fixedStep();
+
+  this.physicsWorld.step(this.fixedTimeStep);
+
+  updateBodies(this.physicsWorld);
+
+  if (this.enableDebugger) {
+    this.cannonDebugger.update();
+  }
+}
+
+function updateBodies(world) {
+  world.bodies.forEach(function (body) {
+    if (body.threeMesh != undefined) {
+      body.threeMesh.position.copy(body.position);
+      body.threeMesh.quaternion.copy(body.quaternion);
+    }
+  });
+}
+
+function addLights() {
   this.renderer.shadowMap.enabled = true;
-  this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  this.renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 
-  ///platform
-  var platform;
-  var platformDiameter = 170;
-  var platformRadiusTop = platformDiameter * 0.5;
-  var platformRadiusBottom = platformDiameter * 0.5 + 0.2;
-  var platformHeight = 1;
-  var platformSegments = 85;
+  // LIGHTS
+  const ambient = new THREE.AmbientLight(0x888888);
+  this.scene.add(ambient);
 
-  var platformGeometry = new THREE.CylinderGeometry(
-    platformRadiusTop,
-    platformRadiusBottom,
-    platformHeight,
-    platformSegments
-  );
+  const light = new THREE.DirectionalLight(0xdddddd);
+  light.position.set(3, 10, 4);
+  light.target.position.set(0, 0, 0);
 
-  //physi.js platform (invisible; provides structure) (separating three.js & physi.js improves peformance)
-  var physiPlatformMaterial = Physijs.createMaterial(
-    new THREE.MeshLambertMaterial(),
-    this.pf,
-    this.pr
-  );
-  var physiPlatform = new Physijs.CylinderMesh(
-    platformGeometry,
-    physiPlatformMaterial,
-    0
-  );
-  physiPlatform.name = "physicalPlatform";
-  physiPlatform.position.set(0, -0.5, 0);
-  physiPlatform.visible = true;
-  this.scene.add(physiPlatform);
+  light.castShadow = true;
+
+  const lightSize = 10;
+  light.shadow.camera.near = 1;
+  light.shadow.camera.far = 50;
+  light.shadow.camera.left = light.shadow.camera.bottom = -lightSize;
+  light.shadow.camera.right = light.shadow.camera.top = lightSize;
+
+  light.shadow.mapSize.width = 1024;
+  light.shadow.mapSize.height = 1024;
+
+  this.sun = light;
+  this.scene.add(light);
 }

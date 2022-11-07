@@ -1,46 +1,34 @@
+import * as THREE from "three";
+import * as CANNON from "cannon-es";
+import CannonDebugger from "cannon-es-debugger";
+
 import addCar from "./controllers/addCar";
-import configureWheel from "./controllers/configureWheel";
-import configureWheelConstraints from "./controllers/configureWheelConstraints";
 import handleCamera from "./controllers/handleCamera";
-import handleKeyDown from "./controllers/handleKeyDown";
-import handleKeyUp from "./controllers/handleKeyUp";
+
 import render from "./controllers/render";
-import setupNightCity from "./controllers/setupNightCity";
+import setupCity from "./controllers/setupCity";
 import setupScene from "./controllers/setupScene";
+import addVisualToCannonBody from "./controllers/addVisualToCannonBody";
+import cannonShapeToThreeMesh from "./controllers/cannonShapeToThreeMesh";
+import loadCar from "./controllers/loadCar";
+import { handleKeyDown, handleKeyUp } from "./controllers/handleKeys";
 
 class Game {
   constructor() {
-    Physijs.scripts.worker = "/js/physijs_worker.js";
-    Physijs.scripts.ammo = "/js/ammo.js";
-
-    /////---Settings---/////
-    this.bwf = 3.5; //bus wheel friction
-    this.bwr = 0; //bus wheel restitution
-    this.pf = 4.2; //platform friction
-    this.pr = 0; //platform restitution
-    this.backgroundColor = 0xcdd3d6;
-
-    /////---Initiation---/////
-    this.busArray = [];
-    this.Player1 = { name: "gretchen", score: 0 };
-    this.Player2 = { name: "bertha", score: 0 };
-    this.roundActive = false;
     this.scene = null;
     this.environment = null;
     this.camera = null;
-    ///Renderer
-    this.renderer = new THREE.WebGLRenderer({ antialias: true });
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(this.renderer.domElement);
+    this.enableDebugger = true;
 
     this.setupScene = setupScene.bind(this);
-    this.setupNightCity = setupNightCity.bind(this);
-    this.configureWheel = configureWheel.bind(this);
-    this.configureWheelConstraints = configureWheelConstraints.bind(this);
+    this.setupCity = setupCity.bind(this);
     this.render = render.bind(this);
     this.addCar = addCar.bind(this);
     this.handleKeyDown = handleKeyDown.bind(this);
     this.handleKeyUp = handleKeyUp.bind(this);
+
+    this.addVisualToCannonBody = addVisualToCannonBody.bind(this);
+    this.cannonShapeToThreeMesh = cannonShapeToThreeMesh.bind(this);
 
     document.onkeydown = this.handleKeyDown;
     document.onkeyup = this.handleKeyUp;
@@ -48,9 +36,45 @@ class Game {
     this.handleCamera = handleCamera.bind(this);
 
     this.setupScene();
-    this.setupNightCity();
-    this.player = this.addCar();
+    this.loadCar = loadCar.bind(this);
+
+    this.setupCity();
+
     this.render();
+    this.addBody = this.addBody.bind(this);
+
+    this.loadCar(this.addCar);
+
+    window.game = this;
+  }
+
+  addBody(type = "box") {
+    let typeVsShape = {
+      sphere: new CANNON.Sphere(0.5),
+      box: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)),
+    };
+
+    let shape = typeVsShape[type];
+
+    const material = new CANNON.Material();
+    const body = new CANNON.Body({ mass: 5, material: material });
+
+    body.addShape(shape);
+
+    const x = Math.random() * 0.3 + 1;
+    body.position.set(x, 5, 0);
+    body.linearDamping = this.damping;
+    this.physicsWorld.addBody(body);
+
+    this.addVisualToCannonBody(body, type, true, false);
+
+    const material_ground = new CANNON.ContactMaterial(
+      this.groundMaterial,
+      material,
+      { friction: 0.3, restitution: 0.5, contactEquationStiffness: 1000 }
+    );
+
+    this.physicsWorld.addContactMaterial(material_ground);
   }
 }
 

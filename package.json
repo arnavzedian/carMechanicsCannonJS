@@ -16,6 +16,8 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
+    "cannon-es": "^0.20.0",
+    "cannon-es-debugger": "^1.0.0",
     "three": "^0.146.0"
   }
 }
