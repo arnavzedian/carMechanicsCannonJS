@@ -15,7 +15,9 @@ export default function setupScene() {
   this.camera.position.set(0, 2, -8);
   this.camera.lookAt(new THREE.Vector3(0, 1, 0));
 
-  this.renderer = new THREE.WebGLRenderer();
+  this.renderer = new THREE.WebGLRenderer({ antialias: true });
+  this.renderer.outputEncoding = THREE.sRGBEncoding;
+  this.renderer.setPixelRatio(window.devicePixelRatio);
   this.renderer.setSize(window.innerWidth, window.innerHeight);
 
   this.renderer.autoClear = false;

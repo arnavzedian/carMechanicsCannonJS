@@ -21,7 +21,7 @@ class Game {
     this.scene = null;
     this.environment = null;
     this.camera = null;
-    // this.enableDebugger = true;
+    this.enableDebugger = true;
 
     this.setupScene = setupScene.bind(this);
     this.setupCity = setupCity.bind(this);
