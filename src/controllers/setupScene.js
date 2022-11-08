@@ -17,7 +17,10 @@ export default function setupScene() {
 
   this.renderer = new THREE.WebGLRenderer();
   this.renderer.setSize(window.innerWidth, window.innerHeight);
+
+  this.renderer.autoClear = false;
   document.body.appendChild(this.renderer.domElement);
+  this.defaultPixelRatio = this.renderer.getPixelRatio();
 
   if (this.enableDebugger) {
     const axesHelper = new THREE.AxesHelper(8);
@@ -26,7 +29,7 @@ export default function setupScene() {
   }
 
   setupCannon.call(this);
-  addLights.call(this);
+  // addLights.call(this);
 }
 
 function setupCannon() {
@@ -53,7 +56,7 @@ function setupCannon() {
   groundBody.addShape(groundShape);
   physicsWorld.addBody(groundBody);
 
-  this.addVisualToCannonBody(groundBody, "ground", false, true);
+  // this.addVisualToCannonBody(groundBody, "ground", false, true);
 
   if (this.enableDebugger) {
     const cannonDebugger = new CannonDebugger(this.scene, physicsWorld);
@@ -86,25 +89,40 @@ function addLights() {
   this.renderer.shadowMap.enabled = true;
   this.renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 
-  // LIGHTS
-  const ambient = new THREE.AmbientLight(0x888888);
+  const ambient = new THREE.AmbientLight(0xaaaaaa, 1);
   this.scene.add(ambient);
 
-  const light = new THREE.DirectionalLight(0xdddddd);
-  light.position.set(3, 10, 4);
-  light.target.position.set(0, 0, 0);
+  let hemiLight = new THREE.HemisphereLight(0xffc6b5, 0xffc6b5, 2);
+  this.scene.add(hemiLight);
 
-  light.castShadow = true;
+  const dirLight = new THREE.DirectionalLight(0xaaaaaa, 0.5);
+  dirLight.position.set(30, 100, 40);
+  dirLight.target.position.set(0, 0, 0);
 
-  const lightSize = 10;
-  light.shadow.camera.near = 1;
-  light.shadow.camera.far = 50;
-  light.shadow.camera.left = light.shadow.camera.bottom = -lightSize;
-  light.shadow.camera.right = light.shadow.camera.top = lightSize;
+  dirLight.castShadow = true;
 
-  light.shadow.mapSize.width = 1024;
-  light.shadow.mapSize.height = 1024;
+  const lightSize = 30;
+  dirLight.shadow.camera.near = 1;
+  dirLight.shadow.camera.far = 500;
+  dirLight.shadow.camera.left = dirLight.shadow.camera.bottom = -lightSize;
+  dirLight.shadow.camera.right = dirLight.shadow.camera.top = lightSize;
 
-  this.sun = light;
-  this.scene.add(light);
+  dirLight.shadow.bias = 0.0039;
+  dirLight.shadow.mapSize.width = 1024;
+  dirLight.shadow.mapSize.height = 1024;
+
+  this.sun = dirLight;
+  this.scene.add(dirLight);
+
+  let pointLight = new THREE.SpotLight(0xffc6b5, 0);
+  pointLight.position.set(-50, 50, 50);
+  pointLight.castShadow = true;
+  this.scene.add(pointLight);
+
+  pointLight.shadow.bias = -0.0001;
+  pointLight.shadow.mapSize.width = 1024 * 4;
+  pointLight.shadow.mapSize.height = 1024 * 4;
+
+  this.sun = dirLight;
+  this.scene.add(dirLight);
 }

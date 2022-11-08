@@ -13,6 +13,8 @@ import cannonShapeToThreeMesh from "./controllers/cannonShapeToThreeMesh";
 import loadCar from "./controllers/loadCar";
 import { handleKeyDown, handleKeyUp } from "./controllers/handleKeys";
 import loadEnvironment from "./controllers/loadEnvironment";
+import addGrass from "./controllers/addGrass";
+import addSky from "./controllers/addSky";
 
 class Game {
   constructor() {
@@ -43,13 +45,24 @@ class Game {
 
     this.setupCity();
 
-    this.render();
     this.addBody = this.addBody.bind(this);
 
     this.loadCar(this.addCar);
-    this.loadEnvironment();
+    // this.loadEnvironment();
+
+    this.addGrass = addGrass.bind(this);
+
+    this.addGrass();
 
     window.game = this;
+
+    this.addSky = addSky.bind(this);
+
+    window.addEventListener("resize", onWindowResize.bind(this), false);
+
+    this.addSky();
+
+    this.render();
   }
 
   addBody(type = "box") {
@@ -83,3 +96,22 @@ class Game {
 }
 
 new Game();
+
+function onWindowResize() {
+  let w = window.innerWidth;
+  let h = window.innerHeight;
+  if (!isInFullscreen()) {
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    h = w / 1.6;
+  } else {
+    //Reduce resolution at full screen for better performance
+    renderer.setPixelRatio(this.defaultPixelRatio);
+  }
+  this.camera.aspect = w / h;
+  this.renderer.setSize(w, h, false);
+  this.backgroundMaterial.uniforms.resolution.value = new THREE.Vector2(
+    canvas.width,
+    canvas.height
+  );
+  this.camera.updateProjectionMatrix();
+}

@@ -1,3 +1,5 @@
+import * as THREE from "three";
+import * as CANNON from "cannon-es";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 
 export default function loadEnvironment(callback) {
@@ -7,8 +9,15 @@ export default function loadEnvironment(callback) {
   game.car = {};
 
   loader.load(
-    "./assets/dayCity.fbx",
+    "./assets/ww2Scene.fbx",
     function (object) {
+      object.traverse(function (child) {
+        if (child.isMesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
+
       addColliders.call(game, object);
       game.environment = object;
       game.scene.add(object);
@@ -39,7 +48,7 @@ function addColliders(assets) {
       body.addShape(box);
       body.position.copy(child.position);
       body.quaternion.copy(child.quaternion);
-      world.add(body);
+      world.addBody(body);
     }
   });
 }
