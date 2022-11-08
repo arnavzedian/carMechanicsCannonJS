@@ -70,22 +70,11 @@ export default function addGrass() {
   //Initialise three.js. There are two scenes which are drawn after one another with clear() called manually at the start of each frame
   //Grass scene
   var scene = this.scene;
-
+  let camera = this.camera;
   //Camera
   var distance = 1500;
 
   var FOV = 45; //2 * Math.atan(window.innerHeight / distance) * 180 / Math.PI;
-  var camera = new THREE.PerspectiveCamera(
-    FOV,
-    window.innerWidth / window.innerHeight,
-    1,
-    20000
-  );
-
-  camera.position.set(-30, 5, 30);
-  camera.lookAt(new THREE.Vector3(0, 0, 0));
-
-  scene.add(camera);
 
   //Light for ground plane
   var ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -723,7 +712,7 @@ void main() {
           -Math.cos(azimuth)
         ),
       },
-      cameraPosition: { type: "vec3", value: camera.position },
+      cameraPosition: { type: "vec3", value: this.camera.position },
       ambientStrength: { type: "float", value: ambientStrength },
       translucencyStrength: { type: "float", value: translucencyStrength },
       diffuseStrength: { type: "float", value: diffuseStrength },

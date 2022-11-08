@@ -11,6 +11,8 @@ export default function loadCar(callback) {
     function (object) {
       object.traverse(function (child) {
         // let receiveShadow = true;
+        child.frustumCulled = false;
+
         console.log(child, child.name.includes("wheel"));
         if (child.isMesh) {
           if (child.name == "carBody") {

@@ -7,9 +7,9 @@ export default function setupScene() {
   this.scene = new THREE.Scene();
   this.scene.background = new THREE.Color(0, 0, 0);
   this.camera = new THREE.PerspectiveCamera(
-    40,
+    45,
     window.innerWidth / window.innerHeight,
-    0.1,
+    1,
     1000
   );
   this.camera.position.set(0, 2, -8);
