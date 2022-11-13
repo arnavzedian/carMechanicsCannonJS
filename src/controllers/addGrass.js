@@ -21,8 +21,8 @@ export default function addGrass() {
 
   //Variables for blade mesh
   var joints = 4;
-  var bladeWidth = 0.052;
-  var bladeHeight = 0.5;
+  var bladeWidth = 0.072;
+  var bladeHeight = 0.3;
 
   //Patch side length
   var width = 50;
@@ -31,7 +31,7 @@ export default function addGrass() {
   //Distance between two ground plane vertices
   var delta = width / resolution;
   //Radius of the sphere onto which the ground plane is bent
-  var radius = 240;
+  var radius = 10000;
   //User movement speed
   var speed = 3;
 
@@ -41,7 +41,7 @@ export default function addGrass() {
   var pos = new THREE.Vector2(0.01, 0.01);
 
   //Number of blades
-  var instances = 40000;
+  var instances = 50000;
   if (mobile) {
     instances = 7000;
     width = 50;
@@ -95,15 +95,9 @@ gui.close();
   //These have been taken from "Realistic real-time grass rendering" by Eddie Lee, 2010
   var loader = new THREE.TextureLoader();
   loader.crossOrigin = "";
-  var grassTexture = loader.load(
-    "https://al-ro.github.io/images/grass/blade_diffuse.jpg"
-  );
-  var alphaMap = loader.load(
-    "https://al-ro.github.io/images/grass/blade_alpha.jpg"
-  );
-  var noiseTexture = loader.load(
-    "https://al-ro.github.io/images/grass/perlinFbm.jpg"
-  );
+  var grassTexture = loader.load("/textures/blade_diffuse.jpg");
+  var alphaMap = loader.load("/textures/blade_alpha.jpg");
+  var noiseTexture = loader.load("/textures/perlinFbmClean.jpg");
   noiseTexture.wrapS = THREE.RepeatWrapping;
   noiseTexture.wrapT = THREE.RepeatWrapping;
 
@@ -244,7 +238,7 @@ gui.close();
   groundGeometry.lookAt(new THREE.Vector3(0, 1, 0));
   groundGeometry.verticesNeedUpdate = true;
   var groundMaterial = new THREE.MeshPhongMaterial({
-    color: new THREE.Color("rgb(10%, 25%, 2%)"),
+    color: new THREE.Color("rgb(4%, 12%, 2%)"),
   });
 
   var sharedPrefix = `

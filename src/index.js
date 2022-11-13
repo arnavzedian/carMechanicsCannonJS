@@ -22,6 +22,7 @@ class Game {
     this.environment = null;
     this.camera = null;
     // this.enableDebugger = true;
+    this.disableFollowCam = true;
 
     this.setupScene = setupScene.bind(this);
     this.setupCity = setupCity.bind(this);
@@ -48,7 +49,7 @@ class Game {
     this.addBody = this.addBody.bind(this);
 
     this.loadCar(this.addCar);
-    // this.loadEnvironment();
+    this.loadEnvironment();
 
     this.addGrass = addGrass.bind(this);
 

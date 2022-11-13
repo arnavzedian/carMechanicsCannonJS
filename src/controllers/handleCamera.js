@@ -7,6 +7,8 @@ export default function handleCamera() {
     return;
   }
 
+  if (this.disableFollowCam) return true;
+
   if (this.followCam === undefined) return;
   const pos = this.car.carBody.position.clone();
   pos.y += 0.3;

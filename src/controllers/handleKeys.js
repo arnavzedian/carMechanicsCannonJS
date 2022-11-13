@@ -49,8 +49,8 @@ export function handleKeyUp(keyEvent) {
 }
 
 function goForward(forward) {
-  const maxForce = 70;
-  const brakeForce = 3;
+  const maxForce = 200;
+  const brakeForce = 5;
 
   const force = maxForce * forward;
 
@@ -71,7 +71,7 @@ function goForward(forward) {
 }
 
 function steer(turn) {
-  const maxSteerVal = 0.3;
+  const maxSteerVal = 0.5;
 
   const steer = maxSteerVal * turn;
 
