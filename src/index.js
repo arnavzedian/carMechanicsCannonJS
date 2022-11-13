@@ -101,13 +101,13 @@ new Game();
 function onWindowResize() {
   let w = window.innerWidth;
   let h = window.innerHeight;
-  if (!isInFullscreen()) {
-    this.renderer.setPixelRatio(window.devicePixelRatio);
-    h = w / 1.6;
-  } else {
-    //Reduce resolution at full screen for better performance
-    renderer.setPixelRatio(this.defaultPixelRatio);
-  }
+  // if (!isInFullscreen()) {
+  //   this.renderer.setPixelRatio(window.devicePixelRatio);
+  //   h = w / 1.6;
+  // } else {
+  //   //Reduce resolution at full screen for better performance
+  //   renderer.setPixelRatio(this.defaultPixelRatio);
+  // }
   this.camera.aspect = w / h;
   this.renderer.setSize(w, h, false);
   this.backgroundMaterial.uniforms.resolution.value = new THREE.Vector2(
