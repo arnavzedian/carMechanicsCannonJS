@@ -67,7 +67,7 @@ export function handleKeyUp(keyEvent) {
 }
 
 function goForward(forward, index) {
-  const maxForce = 200;
+  const maxForce = 400;
   const brakeForce = 5;
 
   let vehicle = this.cars[index];

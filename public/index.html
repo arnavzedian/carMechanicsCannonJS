@@ -3,8 +3,64 @@
     <meta charset="UTF-8" />
     <title>Car Royale</title>
     <link rel="stylesheet" href="css/style.css" />
+    <style>
+      #gameUI {
+        display: none;
+        position: absolute;
+        padding: 25px;
+        height: 30vh;
+        width: 38vw;
+        background: #ffffff8f;
+        left: 31vw;
+        border-radius: 25px;
+        gap: 25px;
+        flex-direction: column;
+        top: 35vh;
+        /* display: flex; */
+        backdrop-filter: blur(20px);
+        justify-content: center;
+        align-items: center;
+      }
+
+      body {
+        overflow: hidden;
+      }
+
+      #messageUI {
+        font-family: roboto;
+        font-weight: 900;
+        color: #cf5628;
+      }
+
+      button {
+        padding: 12px 29px;
+        border: none;
+        background: #d98450;
+        font-weight: 900;
+        border-radius: 15px;
+        cursor: pointer;
+        color: #fff;
+        transition: 0.25s ease-in-out all;
+      }
+
+      button:hover {
+        transform: scale(0.9);
+      }
+    </style>
   </head>
   <body>
+    <div id="gameUI">
+      <h2 id="messageUI"></h2>
+      <div id="buttons">
+        <button onclick="reload()">Play Again</button>
+      </div>
+    </div>
+
+    <script>
+      function reload() {
+        window.location.reload();
+      }
+    </script>
     <script src="./js/main.js"></script>
   </body>
 </html>
