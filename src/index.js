@@ -26,8 +26,11 @@ class Game {
 
     this.setupScene = setupScene.bind(this);
     this.setupCity = setupCity.bind(this);
+
     this.render = render.bind(this);
+
     this.addCar = addCar.bind(this);
+
     this.handleKeyDown = handleKeyDown.bind(this);
     this.handleKeyUp = handleKeyUp.bind(this);
 
@@ -48,7 +51,13 @@ class Game {
 
     this.addBody = this.addBody.bind(this);
 
-    this.loadCar(this.addCar);
+    let wheelConfig1 = [-1.2, -1.2, 1, 1];
+
+    // this.loadCar(this.addCar, "yellowCar", wheelConfig1);
+    this.loadCar(this.addCar, "lowPolyCar1", wheelConfig1);
+    // this.loadCar(this.addCar, "lowPolyCar2", wheelConfig1);
+    this.loadCar(this.addCar, "lowPolyCar3", wheelConfig1);
+
     this.loadEnvironment();
 
     this.addGrass = addGrass.bind(this);
@@ -89,7 +98,7 @@ class Game {
     const material_ground = new CANNON.ContactMaterial(
       this.groundMaterial,
       material,
-      { friction: 0.3, restitution: 0.5, contactEquationStiffness: 1000 }
+      { friction: 0.5, restitution: 0.5, contactEquationStiffness: 1000 }
     );
 
     this.physicsWorld.addContactMaterial(material_ground);

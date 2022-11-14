@@ -1,18 +1,18 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
 
-export default function addCar() {
+export default function addCar(theCar, wheelConfig) {
   const mass = 150;
   const chassisShape = new CANNON.Box(new CANNON.Vec3(1, 0.3, 2));
   const chassisBody = new CANNON.Body({ mass: mass });
-  const pos = this.car.carBody.position.clone();
+  const pos = theCar.carBody.position.clone();
   pos.y += 1;
   let game = this;
 
   chassisBody.addShape(chassisShape);
   chassisBody.position.copy(pos);
   chassisBody.angularVelocity.set(0, 0, 0);
-  chassisBody.threeMesh = this.car.carBody;
+  chassisBody.threeMesh = theCar.carBody;
 
   const options = {
     radius: 0.3,
@@ -40,25 +40,26 @@ export default function addCar() {
   });
 
   const axlewidth = 0.8;
-  options.chassisConnectionPointLocal.set(axlewidth, 0, -1.2);
+
+  options.chassisConnectionPointLocal.set(axlewidth, 0, wheelConfig[0]);
   vehicle.addWheel(options);
 
-  options.chassisConnectionPointLocal.set(-axlewidth, 0, -1.2);
+  options.chassisConnectionPointLocal.set(-axlewidth, 0, wheelConfig[1]);
   vehicle.addWheel(options);
 
-  options.chassisConnectionPointLocal.set(axlewidth, 0, 1);
+  options.chassisConnectionPointLocal.set(axlewidth, 0, wheelConfig[2]);
   vehicle.addWheel(options);
 
-  options.chassisConnectionPointLocal.set(-axlewidth, 0, 1);
+  options.chassisConnectionPointLocal.set(-axlewidth, 0, wheelConfig[3]);
   vehicle.addWheel(options);
 
   vehicle.addToWorld(this.physicsWorld);
 
   const wheelBodies = [];
   let index = 0;
-  const wheels = [this.car.wheel];
+  const wheels = [theCar.wheel];
   for (let i = 0; i < 3; i++) {
-    let wheel = this.car.wheel.clone();
+    let wheel = theCar.wheel.clone();
     this.scene.add(wheel);
     wheels.push(wheel);
   }
@@ -82,8 +83,8 @@ export default function addCar() {
 
   this.physicsWorld.addEventListener("postStep", function () {
     let index = 0;
-    game.vehicle.wheelInfos.forEach(function (wheel) {
-      game.vehicle.updateWheelTransform(index);
+    vehicle.wheelInfos.forEach(function (wheel) {
+      vehicle.updateWheelTransform(index);
       const t = wheel.worldTransform;
       wheelBodies[index].threeMesh.position.copy(t.position);
       wheelBodies[index].threeMesh.quaternion.copy(t.quaternion);
@@ -91,9 +92,11 @@ export default function addCar() {
     });
   });
 
-  game.vehicle = vehicle;
+  if (!game.cars) game.cars = [];
 
-  game.car.wheels = wheelBodies;
+  game.cars.push(vehicle);
+
+  theCar.wheels = wheelBodies;
 
   this.followCam = new THREE.Object3D();
   this.followCam.position.copy(this.camera.position);

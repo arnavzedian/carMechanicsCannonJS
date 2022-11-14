@@ -9,7 +9,7 @@ export default function addVisualToCannonBody(
 ) {
   body.name = name;
   if (this.currentMaterial === undefined)
-    this.currentMaterial = new THREE.MeshLambertMaterial({ color: 0x888888 });
+    this.currentMaterial = new THREE.MeshLambertMaterial({ color: 0x812a12 });
   if (this.settings === undefined) {
     this.settings = {
       stepFrequency: 60,

@@ -1,13 +1,16 @@
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 
-export default function loadCar(callback) {
+export default function loadCar(callback, assetName, wheelConfig) {
   const game = this;
   const loader = new FBXLoader();
 
-  game.car = {};
+  if (!game.carMeshes) game.carMeshes = [];
+  let index = game.carMeshes.length;
+
+  game.carMeshes[index] = {};
 
   loader.load(
-    "./assets/yellowCar.fbx",
+    `./assets/${assetName}.fbx`,
     function (object) {
       object.traverse(function (child) {
         // let receiveShadow = true;
@@ -16,11 +19,11 @@ export default function loadCar(callback) {
         console.log(child, child.name.includes("wheel"));
         if (child.isMesh) {
           if (child.name == "carBody") {
-            game.car.carBody = child;
+            game.carMeshes[index].carBody = child;
 
             child.castShadow = true;
           } else if (child.name.includes("wheel")) {
-            game.car.wheel = child;
+            game.carMeshes[index].wheel = child;
 
             // child.parent = game.scene;
             child.visible = true;
@@ -31,10 +34,10 @@ export default function loadCar(callback) {
         }
       });
 
-      game.scene.add(game.car.wheel);
-      game.scene.add(game.car.carBody);
+      game.scene.add(game.carMeshes[index].wheel);
+      game.scene.add(game.carMeshes[index].carBody);
 
-      if (callback) callback();
+      if (callback) callback(game.carMeshes[index], wheelConfig);
     },
     null,
     function (error) {

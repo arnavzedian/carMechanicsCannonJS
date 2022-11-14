@@ -8,6 +8,8 @@ export default function loadEnvironment(callback) {
 
   game.car = {};
 
+  addCollidableBody.call(game, true, null, 3);
+
   loader.load(
     "./assets/gameNatureAssets.fbx",
     function (object) {
@@ -44,8 +46,8 @@ function addDestroyables(assets) {
   });
 }
 
-function addCollidableBody(sphere = false, visualMesh) {
-  let sphereShape = new CANNON.Sphere(1);
+function addCollidableBody(sphere = false, visualMesh, overrideMass = 1) {
+  let sphereShape = new CANNON.Sphere(1.5);
   let boxShape = new CANNON.Box(new CANNON.Vec3(1, 1, 1));
 
   // if (visualMesh) {
@@ -61,7 +63,7 @@ function addCollidableBody(sphere = false, visualMesh) {
   const world = this.physicsWorld;
 
   const material = new CANNON.Material();
-  const body = new CANNON.Body({ mass: 1, material: material });
+  const body = new CANNON.Body({ mass: overrideMass, material: material });
   if (sphere) {
     body.addShape(sphereShape);
   } else {

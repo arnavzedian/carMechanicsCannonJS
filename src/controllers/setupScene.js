@@ -49,14 +49,15 @@ function setupCannon() {
   physicsWorld.broadphase = new CANNON.NaiveBroadphase();
 
   const groundShape = new CANNON.Plane();
+  const groundBoxShape = new CANNON.Box(new CANNON.Vec3(25, 0.2, 25));
   const groundMaterial = new CANNON.Material();
   this.groundMaterial = groundMaterial;
   const groundBody = new CANNON.Body({ mass: 0, material: groundMaterial });
-  groundBody.quaternion.setFromAxisAngle(
-    new CANNON.Vec3(1, 0, 0),
-    -Math.PI / 2
-  );
-  groundBody.addShape(groundShape);
+  // groundBody.quaternion.setFromAxisAngle(
+  //   new CANNON.Vec3(1, 0, 0),
+  //   -Math.PI / 2
+  // );
+  groundBody.addShape(groundBoxShape);
   physicsWorld.addBody(groundBody);
 
   // this.addVisualToCannonBody(groundBody, "ground", false, true);
