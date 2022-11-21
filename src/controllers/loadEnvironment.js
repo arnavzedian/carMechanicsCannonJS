@@ -8,25 +8,25 @@ export default function loadEnvironment(callback) {
 
   game.car = {};
 
-  let ball = addCollidableBody.call(game, true, null, 3);
+  // let ball = addCollidableBody.call(game, true, null, 3);
 
-  ball.addEventListener("collide", function (e) {
-    if (e.contact.bj) {
-      if (e.contact.bj.threeMesh) {
-        let name = e.contact.bj.threeMesh.name;
+  // ball.addEventListener("collide", function (e) {
+  //   if (e.contact.bj) {
+  //     if (e.contact.bj.threeMesh) {
+  //       let name = e.contact.bj.threeMesh.name;
 
-        if (name == "goal1") {
-          console.log("Player 2 won");
-          document.querySelector("#gameUI").style.display = "flex";
-          document.querySelector("#messageUI").innerText = "Player 2 won!";
-        } else if (name == "goal2") {
-          console.log("Player 1 won");
-          document.querySelector("#gameUI").style.display = "flex";
-          document.querySelector("#messageUI").innerText = "Player 1 won!";
-        }
-      }
-    }
-  });
+  //       if (name == "goal1") {
+  //         console.log("Player 2 won");
+  //         document.querySelector("#gameUI").style.display = "flex";
+  //         document.querySelector("#messageUI").innerText = "Player 2 won!";
+  //       } else if (name == "goal2") {
+  //         console.log("Player 1 won");
+  //         document.querySelector("#gameUI").style.display = "flex";
+  //         document.querySelector("#messageUI").innerText = "Player 1 won!";
+  //       }
+  //     }
+  //   }
+  // });
 
   loader.load(
     "./assets/gameNatureAssets.fbx",
@@ -35,6 +35,10 @@ export default function loadEnvironment(callback) {
         if (child.isMesh) {
           child.castShadow = true;
           child.receiveShadow = true;
+
+          if (child.name.includes("theBall")) {
+            addTheBall.call(game, child);
+          }
         }
       });
 
@@ -65,19 +69,52 @@ function addDestroyables(assets) {
   });
 }
 
+function addTheBall(threeMesh) {
+  let sphereShape = new CANNON.Sphere(1.5);
+  const material = new CANNON.Material();
+  const body = new CANNON.Body({ mass: 3, material: material });
+  body.addShape(sphereShape);
+  body.position.set(0, 5, 0);
+  body.threeMesh = threeMesh;
+  body.position.copy(threeMesh.position);
+  body.quaternion.copy(threeMesh.quaternion);
+  body.linearDamping = this.damping;
+  const world = this.physicsWorld;
+  world.addBody(body);
+
+  body.addEventListener("collide", function (e) {
+    if (e.contact.bj) {
+      if (e.contact.bj.threeMesh) {
+        let name = e.contact.bj.threeMesh.name;
+
+        if (name == "goal1") {
+          console.log("Player 2 won");
+          document.querySelector("#gameUI").style.display = "flex";
+          document.querySelector("#messageUI").innerText = "Player 2 won!";
+        } else if (name == "goal2") {
+          console.log("Player 1 won");
+          document.querySelector("#gameUI").style.display = "flex";
+          document.querySelector("#messageUI").innerText = "Player 1 won!";
+        }
+      }
+    }
+  });
+
+  // Create contact material behaviour
+  const material_ground = new CANNON.ContactMaterial(
+    this.groundMaterial,
+    material,
+    { friction: 0.1, restitution: 0.6 }
+  );
+
+  world.addContactMaterial(material_ground);
+
+  return body;
+}
+
 function addCollidableBody(sphere = false, visualMesh, overrideMass = 1) {
   let sphereShape = new CANNON.Sphere(1.5);
   let boxShape = new CANNON.Box(new CANNON.Vec3(1, 1, 1));
-
-  // if (visualMesh) {
-  //   boxShape = new CANNON.Box(
-  //     new CANNON.Vec3(
-  //       visualMesh.scale.x,
-  //       visualMesh.scale.y,
-  //       visualMesh.scale.z
-  //     )
-  //   );
-  // }
 
   const world = this.physicsWorld;
 
